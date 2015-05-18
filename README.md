@@ -21,6 +21,7 @@ pip install -r requirements.txt
 - data/: 微博转发数据，*.txt是原始数据，*.pkl是Python数据结构文件（见pickle模块）。
 	- test-weibo-rt-data.txt: 测试用的原始数据。
 	- test_weibo_rt_dict.pkl: 测试用的数据结构。
-- utils/: 自己写的函数，比如把txt文件变成pkl数据结构，或者读取pkl文件的函数，都写在这里面的.py文件里。
-	- __utils__.py: 用来让Python认得这个目录的，这个文件可以不予理会，不要修改。
+- utils/: 自己写的模组，包含自己写的各种函数，比如把txt文件变成pkl数据结构，或者读取pkl文件的函数，都写在这里面的.py文件里。
+	- \_\_init\_\_.py: 用来让Python认得这个目录的，这个文件可以不予理会，不要修改。
+    - helloworld.py: 一个函数的例子。
 - app.py: 运行程序的主文件。
