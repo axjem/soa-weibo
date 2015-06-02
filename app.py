@@ -52,7 +52,7 @@ def make_retweet_statistics(m_id):
             # 使用几个计数器，比如如果性别为男性则male += 1, 有通过验证则verified += 1等
         
         # 每个计数器的值除以len(u_ids)即得出比例
-    con = pymongo.Connection('127.0.0.1', 27017)
+    con = pymongo.MongoClient('127.0.0.1', 27017)
     db = con.weibodata
 
     if db.retweet.find_one({'original_mid': m_id}) == None:
@@ -133,7 +133,7 @@ def make_retweet_tree(m_id):
         #~         "parent": "3"
         #~     }
         #~ ]
-    con = pymongo.Connection('127.0.0.1', 27017)
+    con = pymongo.MongoClient('127.0.0.1', 27017)
     db = con.weibodata
 
     result = []
@@ -178,7 +178,7 @@ def preprocess(m_id):
     # 例：
     # name = "爽爷"
     # data = {"m_id": "4", "parent_name": "李雪"}
-    con = pymongo.Connection('127.0.0.1', 27017)
+    con = pymongo.MongoClient('127.0.0.1', 27017)
     db = con.weibodata
     weibo = db.weibo.find_one({'mid': m_id})
     u_id = weibo['uid']    
