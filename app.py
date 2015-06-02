@@ -11,25 +11,22 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def main():
     # 设计文件中定义传入格式: {"m_id": "104967351"}
-    m_id = request.values.get('m_id', '3511308492007954')
-    response = []
-    response.append(make_retweet_tree(m_id))
-    response.append(make_retweet_statistics(m_id))
-    return response.__str__()
 
-    '''
     if request.method == 'POST':
         json_data = request.get_json()  # 读取POST请求中的JSON
         # 设计文件中定义传入格式: {"m_id": "104967351"}
         m_id = json_data["m_id"]    # 得到m_id
 
-        # 待实现：处理m_id并返回所要求的结构
-
-        return make_retweet_tree(m_id)
-
     else:
-        return 'Hello World!'
-    '''
+        m_id = request.values.get('m_id', '3511308492007954')
+
+    print "m_id =", m_id
+
+    res = {
+        "tree_node": make_retweet_tree(m_id),
+        "statistics": make_retweet_statistics(m_id)
+    }
+    return jsonify(res)
 
 def make_retweet_statistics(m_id):
     # 在db.retweet中找这条信息是否转发了其他信息
