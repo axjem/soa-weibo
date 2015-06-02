@@ -14,7 +14,7 @@ def main():
     helloworld.hello()  # 这是个调用我们写的函数的例子
 
     # 设计文件中定义传入格式: {"m_id": "104967351"}
-    m_id = request.values.get('m_id', '')
+    m_id = request.values.get('m_id', '3511308492007954')
     response = []
     response.append(make_retweet_tree(m_id))
     response.append(make_retweet_statistics(m_id))
@@ -146,7 +146,7 @@ def make_retweet_tree(m_id):
         for item in retweet_weibo:
             name, data = preprocess(item['retweet_mid'])
             child_weibo_data[name] = data
-            print name, data
+            # print name, data
         for item in child_weibo_data:
             if 'parent_name' not in child_weibo_data[item]:
                 result.append({
@@ -161,7 +161,7 @@ def make_retweet_tree(m_id):
                         'm_id': child_weibo_data[item]['m_id'], 
                         'parent': parent_id
                     })
-                    print parent_id
+                    # print parent_id
                 else:
                     result.append({
                         'm_id': child_weibo_data[item]['m_id'], 
@@ -190,7 +190,7 @@ def preprocess(m_id):
     pattern = re.compile(regExp)
     results = pattern.findall(tmp)
 
-    print text
+    # print text
     if len(results) > 0:
         parent_name = results[0][3:-1]
         data = {'m_id': m_id, 'parent_name': parent_name}
