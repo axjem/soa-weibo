@@ -88,6 +88,10 @@ def make_retweet_statistics(m_id):
         avg_followers = total_followers * 1.0 / user_nums
         avg_followees = total_followees * 1.0 / user_nums
 
+        for loc in location_dist:
+            location_dist[loc] /= (user_nums * 1.0)
+            location_dist[loc] = str(location_dist[loc])
+
         result = {
             'gender_ratio': str(gender_ratio),
             'verified_ratio': str(verified_ratio),
