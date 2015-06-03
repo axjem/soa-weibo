@@ -52,13 +52,17 @@ def make_retweet_statistics(m_id):
     if db.retweet.find_one({'original_mid': m_id}) == None:
         original_mid = db.retweet.find_one({'retweet_mid': m_id})['original_mid']
         return make_retweet_statistics(original_mid)
+
     else:
         u_ids = []
         retweet_weibo = db.retweet.find({'original_mid': m_id})
+
         for item in retweet_weibo:
             u_ids.append(item['retweet_uid'])
+
         male_num = 0
         verified_num = 0
+
         for u_id in u_ids:
             user = db.user.find_one({'u_id': u_id})
             if user['gender'] == 'm':
