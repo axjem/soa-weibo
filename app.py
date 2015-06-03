@@ -62,6 +62,10 @@ def make_retweet_statistics(m_id):
 
         male_num = 0
         verified_num = 0
+        total_tweets = 0
+        total_followers = 0
+        total_followees = 0
+        location_dist = {}
 
         for u_id in u_ids:
             user = db.user.find_one({'u_id': u_id})
@@ -69,13 +73,30 @@ def make_retweet_statistics(m_id):
                 male_num += 1
             if user['verified_type'] != '-1':   # 验证了的是不同号码挺有趣？
                 verified_num += 1
+            total_tweets += int(user['num_tweets'])
+            total_followers += int(user['num_followers'])
+            total_followees += int(user['num_followees'])
+            
+            location = user['location']
+            if location in location_dist:
+                location_dist[location] += 1
+            else:
+                location_dist[location] = 1
 
-        gender_ratio = male_num * 1.0 / len(u_ids)
-        verified_ratio = verified_num *  1.0 / len(u_ids)
+        user_nums = len(u_ids)
+        gender_ratio = male_num * 1.0 / user_nums
+        verified_ratio = verified_num *  1.0 / user_nums
+        avg_tweets = total_tweets * 1.0 / user_nums
+        avg_followers = total_followers * 1.0 / user_nums
+        avg_followees = total_followees * 1.0 / user_nums
 
         result = {
             'gender_ratio': str(gender_ratio),
-            'verified_ratio': str(verified_ratio)
+            'verified_ratio': str(verified_ratio),
+            'avg_tweets': str(avg_tweets),
+            'avg_followers': str(avg_followers),
+            'avg_followees': str(avg_followees),
+            'location_dist': location_dist
         }
         return result
 
