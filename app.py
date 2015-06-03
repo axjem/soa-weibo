@@ -65,11 +65,14 @@ def make_retweet_statistics(m_id):
                 male_num += 1
             if user['verified_type'] != '-1':   # 验证了的是不同号码挺有趣？
                 verified_num += 1
+
         gender_ratio = male_num * 1.0 / len(u_ids)
         verified_ratio = verified_num *  1.0 / len(u_ids)
-        result = []
-        result.append({'gender_ratio': gender_ratio})
-        result.append({'verified_ratio': verified_ratio})
+
+        result = {
+            'gender_ratio': str(gender_ratio),
+            'verified_ratio': str(verified_ratio)
+        }
         return result
 
 def make_retweet_tree(m_id):
