@@ -73,6 +73,8 @@ def make_retweet_statistics(m_id):
             total_followees += int(user['num_followees'])
             
             location = user['location']
+            location = get_city_from_location(location)
+
             if location in location_dist:
                 location_dist[location] += 1
             else:
@@ -200,6 +202,13 @@ def preprocess(m_id):
     # 例：
     # name = "爽爷"
     # data = {"m_id": "4", "parent_name": "李雪"}
+
+def get_city_from_location(loc):
+    if ' ' not in loc:
+        return loc
+    if '区' in loc:
+        return loc.split()[0]
+    return loc.split()[1]
 
 if __name__ == '__main__':
     reload(sys)
