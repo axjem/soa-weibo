@@ -6,6 +6,9 @@ import sys
 import pymongo
 import re
 
+mongo_host = '127.0.0.1'
+mongo_port = 27017
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -29,7 +32,7 @@ def main():
     return jsonify(res)
 
 def make_retweet_statistics(m_id):
-    con = pymongo.MongoClient('127.0.0.1', 27017)
+    con = pymongo.MongoClient(mongo_host, mongo_port)
     db = con.weibodata
 
     # 在db.retweet中找这条信息是否转发了其他信息
@@ -103,7 +106,7 @@ def make_retweet_statistics(m_id):
         return result
 
 def make_retweet_tree(m_id):
-    con = pymongo.MongoClient('127.0.0.1', 27017)
+    con = pymongo.MongoClient(mongo_host, mongo_port)
     db = con.weibodata
 
     result = []
@@ -184,7 +187,7 @@ def make_retweet_tree(m_id):
 def preprocess(m_id):
     """返回该微博的m_id, 用户名，及里面//@的第一个人的用户名。"""
 
-    con = pymongo.MongoClient('127.0.0.1', 27017)
+    con = pymongo.MongoClient(mongo_host, mongo_port)
     db = con.weibodata
     weibo = db.weibo.find_one({'mid': m_id})
     u_id = weibo['uid']    
