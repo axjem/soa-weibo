@@ -27,6 +27,12 @@ def main():
 
     print "m_id =", m_id
 
+    global tree_result
+    global true_result
+    
+    tree_result = []
+    true_result = []
+
     res = {
         "tree_node": make_retweet_tree(m_id),
         "statistics": make_retweet_statistics(m_id)
@@ -176,9 +182,9 @@ def make_retweet_tree(m_id):
              'm_id': m_id, 
              'parent': "null",
              'depth': 0,
-             'parent_index':-1,
-             'max_depth_subtree':-1,
-             'max_leaf_subtree':-1
+             'parent_index':-1,         # 节点的父亲序号
+             'max_depth_subtree':-1,    # 子树的高度
+             'max_leaf_subtree':-1      # 子树叶节点数
              })
         flag = False
         for item in child_weibo_data:
