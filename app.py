@@ -7,7 +7,9 @@ import pymongo
 import re
 
 mongo_host = '127.0.0.1'
-mongo_port = 27017
+mongo_port = 20018
+tree_result = []
+true_result = []
 
 app = Flask(__name__)
 
@@ -105,11 +107,42 @@ def make_retweet_statistics(m_id):
         }
         return result
 
+def handle(pid,depth):
+    sub_child = []
+
+    global tree_result
+    global true_result
+
+    for item in tree_result:
+        if item['parent'] == pid:
+            sub_child.append(item)
+
+    max_leaf = 0
+    max_depth = -1
+    if len(sub_child) == 0:
+        return depth,1
+    
+    for item in sub_child:
+        true_result.append(item)
+        a,b = handle(item['m_id'],item['depth'])
+        if a > max_depth:
+            max_depth = a
+        max_leaf += b
+        for i in true_result:
+            if i['m_id'] == item['m_id']:
+                i['max_leaf_subtree'] = b
+                i['max_depth_subtree'] = a-i['depth']
+                break
+            
+    return max_depth,max_leaf
+    
+
 def make_retweet_tree(m_id):
     con = pymongo.MongoClient(mongo_host, mongo_port)
     db = con.weibodata
 
-    result = []
+    global tree_result
+    global true_result
     child_weibo_data = {}
 
     # 在db.retweet中找这条信息是否转发了其他信息
@@ -139,31 +172,71 @@ def make_retweet_tree(m_id):
             #~     "爽爷": {"m_id": "4", "parent_name": "李雪"}
             #~ }
             # 表示显安和李雪转发了某条微博，马琳转发了显安，爽爷转发了李雪
-
+        tree_result.append({
+             'm_id': m_id, 
+             'parent': "null",
+             'depth': 0,
+             'parent_index':-1,
+             'max_depth_subtree':-1,
+             'max_leaf_subtree':-1
+             })
+        flag = False
         for item in child_weibo_data:
             if 'parent_name' not in child_weibo_data[item]:
                 # 是第一代转发微博，放入result中
-                result.append({
+                tree_result.append({
                     'm_id': child_weibo_data[item]['m_id'], 
-                    'parent': m_id
+                    'parent': m_id,
+                    'depth':1,
+                    'parent_index':-1,
+                    'max_depth_subtree':-1,
+                    'max_leaf_subtree':-1
                 })
             else:
                 parent_name = child_weibo_data[item]['parent_name']
                 # 用它的parent_name去查child_weibo_data中的m_id，即父微博id
                 if parent_name in child_weibo_data:
                     parent_id = child_weibo_data[parent_name]['m_id']
-                    result.append({
+                    tree_result.append({
                         'm_id': child_weibo_data[item]['m_id'], 
-                        'parent': parent_id
+                        'parent': parent_id,
+                        'depth': -1,
+                        'parent_index':-1,
+                        'max_depth_subtree':-1,
+                        'max_leaf_subtree':-1
                     })
+                    flag = True
                     # print parent_id
                 else:
-                    result.append({
+                    tree_result.append({
                         'm_id': child_weibo_data[item]['m_id'], 
-                        'parent': m_id
+                        'parent': m_id,
+                        'depth':1,
+                        'parent_index':-1,
+                        'max_depth_subtree':-1,
+                        'max_leaf_subtree':-1
                     })
-
-        return result
+        while flag:
+            flag = False
+            for item in tree_result:
+                if item['depth'] == -1:
+                    parent = item['parent']
+                    for p in tree_result:
+                        if p['m_id'] == parent and p['depth'] != -1:
+                            item['depth'] = p['depth'] + 1
+                            break
+            for item in tree_result:
+                if item['depth'] == -1:
+                    flag = True
+        handle("null",0)
+        for i in range(1,len(true_result)):
+            parent = true_result[i]['parent']
+            for j in range(0,i):
+                if true_result[j]['m_id'] == parent:
+                    true_result[i]['parent_index'] = j
+                    break
+                
+        return true_result
         # 例（续上方）：
         #~ result = [
         #~     {
@@ -220,5 +293,5 @@ def get_city_from_location(loc):
 if __name__ == '__main__':
     reload(sys)
     sys.setdefaultencoding('utf-8')
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port = 18084, debug=False)
 
